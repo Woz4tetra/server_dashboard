@@ -32,6 +32,7 @@ def cpu_usage() -> CpuData:
     temperature = psutil.sensors_temperatures()
     virtual_memory_free = virtual_memory.free / 1024**2
     virtual_memory_used = virtual_memory.used / 1024**2
+    print(temperature.keys())
     return CpuData(
         timestamp=datetime.datetime.now().timestamp(),
         utilization=cpu_percent,

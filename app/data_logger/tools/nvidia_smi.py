@@ -125,11 +125,11 @@ class NvidiaSmiManager:
 
     def get_gpu_count(self) -> int:
         process = subprocess.Popen(
-            ["nvidia-smi", "--query-gpu=count", "--format=csv,noheader,nounits"],
+            ["nvidia-smi", "--query-gpu=uuid", "--format=csv,noheader,nounits"],
             stdout=subprocess.PIPE,
         )
         stdout = process.communicate()[0]
-        return int(stdout.decode().strip())
+        return len(stdout.decode().strip().splitlines())
 
     def get_data(self) -> list[GpuData]:
         if self.process.stdout is None:
