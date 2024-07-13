@@ -6,3 +6,4 @@ jsonlines
 netifaces
 dacite
 python-dateutil
+plotly

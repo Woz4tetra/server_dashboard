@@ -1,7 +1,10 @@
 #!/bin/bash
 
+BASE_DIR=$(realpath "$(dirname $0)")
+
 # Activate virtual environment
-source venv/bin/activate
+source ${BASE_DIR}/venv/bin/activate
 
 # Run the application
-python -m streamlit run app/main.py
+cd ${BASE_DIR}
+python -m streamlit run run_dashboard.py

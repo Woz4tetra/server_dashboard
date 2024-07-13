@@ -5,6 +5,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 from app.data_logger.bulk_stats_logger import BulkStatsLogger
 from app.data_logger.today_logger import TodayLogger
+from app.shared_data.constants import BULK_DATA, TODAYS_DATA
 
 
 def initialize_logs() -> None:
@@ -50,7 +51,7 @@ async def async_main() -> None:
     logger = logging.getLogger("data_logger")
     logger.info("Starting data logger")
 
-    data_path = "data/data.jsonl"
+    data_path = TODAYS_DATA
     today_logger = TodayLogger(data_path)
 
     await asyncio.gather(
@@ -59,7 +60,7 @@ async def async_main() -> None:
         today_logger.poll_network(),
         today_logger.poll_ups(),
         today_logger.write_data(),
-        bulk_task(data_path, "bulk_data.jsonl", timedelta(days=1)),
+        bulk_task(data_path, BULK_DATA, timedelta(days=1)),
     )
 
 

@@ -4,10 +4,10 @@ import logging
 import jsonlines
 
 from app.data_logger.tools.cpu_usage import cpu_usage
-from app.data_logger.tools.data_interface import DataInterface
 from app.data_logger.tools.network_health import MultiDestinationHealth
 from app.data_logger.tools.nvidia_smi import nvidia_smi
 from app.data_logger.tools.ups_stats import ups_stats
+from app.shared_data.data_interface import DataInterface
 
 
 class TodayLogger:

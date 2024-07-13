@@ -1,47 +1,15 @@
 import shutil
-from typing import Union, get_args
 
 import jsonlines
 
-from app.data_logger.tools.cpu_usage import CpuAggregatedData, CpuData
-from app.data_logger.tools.network_health import NetworkAggregatedData, NetworkData
-from app.data_logger.tools.nvidia_smi import GpuAggregatedData, GpuData
-from app.data_logger.tools.ups_stats import UpsAggregatedData, UpsData
-
-DataImpl = Union[
-    CpuData,
-    NetworkData,
-    GpuData,
-    UpsData,
-]
-
-AggregateImpl = Union[
-    CpuAggregatedData,
-    NetworkAggregatedData,
-    GpuAggregatedData,
-    UpsAggregatedData,
-]
-
-AGGREGATE_MAPPING: dict[str, str] = {
-    "CpuData": "CpuAggregatedData",
-    "NetworkData": "NetworkAggregatedData",
-    "GpuData": "GpuAggregatedData",
-    "UpsData": "UpsAggregatedData",
-}
-
-
-def get_data_class(data: dict) -> DataImpl:
-    for cls in get_args(DataImpl):
-        if cls.__name__ == data["type"]:
-            return cls
-    raise ValueError(f"Unknown data type: {data['type']}")
-
-
-def get_aggregate_class(class_name: str) -> AggregateImpl:
-    for cls in get_args(AggregateImpl):
-        if cls.__name__ == class_name:
-            return cls
-    raise ValueError(f"Unknown aggregate class: {class_name}")
+from app.shared_data.aggregate_utils import (
+    AGGREGATE_MAPPING,
+    get_aggregate_class,
+    get_data_class,
+    group_by_key,
+    group_by_type,
+)
+from app.shared_data.types import AggregateImpl, DataImpl
 
 
 class BulkStatsLogger:
@@ -60,26 +28,14 @@ class BulkStatsLogger:
         with jsonlines.open(self.data_path) as reader:
             return [get_data_class(row).from_dict(row) for row in reader]
 
-    def group_by_type(self, data: list[DataImpl]) -> dict[str, list[DataImpl]]:
-        groups = {}
-        for row in data:
-            groups.setdefault(row.__class__.__name__, []).append(row)
-        return groups
-
-    def group_by_key(self, data: list[DataImpl], key: str) -> dict[str, list[DataImpl]]:
-        groups = {}
-        for row in data:
-            groups.setdefault(getattr(row, key), []).append(row)
-        return groups
-
     def bulk(self, data: list[DataImpl]) -> list[AggregateImpl]:
-        grouped_by_type = self.group_by_type(data)
+        grouped_by_type = group_by_type(data)
         cpu_data = {"cpu": grouped_by_type.get("CpuData", [])}
-        gpu_data = self.group_by_key(grouped_by_type.get("GpuData", []), "uuid")
-        network_data = self.group_by_key(
+        gpu_data = group_by_key(grouped_by_type.get("GpuData", []), "uuid")
+        network_data = group_by_key(
             grouped_by_type.get("NetworkData", []), "destination"
         )
-        ups_data = self.group_by_key(grouped_by_type.get("UpsData", []), "serial")
+        ups_data = group_by_key(grouped_by_type.get("UpsData", []), "serial")
         return (
             self.aggregate(cpu_data)
             + self.aggregate(gpu_data)
