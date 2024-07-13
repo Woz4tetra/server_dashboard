@@ -1,0 +1,14 @@
+[Unit]
+After=multi-user.target
+Description=server_dashboard_logger
+
+[Service]
+Type=simple
+User=ben
+Group=ben
+ExecStart=/usr/bin/python /opt/megamind/server_dashboard/run_logger_app.py
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
