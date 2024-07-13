@@ -1,0 +1,14 @@
+[Unit]
+After=multi-user.target
+Description=server_dashboard_frontend
+
+[Service]
+Type=simple
+User=ben
+Group=ben
+ExecStart=/opt/megamind/server_dashboard/run_dashboard.sh
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

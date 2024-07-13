@@ -4,16 +4,19 @@ if [ "$EUID" -ne 0 ]
     exit
 fi
 
-echo "Running server_dashboard_logger systemd service uninstall script"
+echo "Running server_dashboard systemd services uninstall script"
 
-SERVICE_NAME=server_dashboard_logger.service
 SERVICE_ROOT_DIR=/etc/systemd/system/
 
-rm ${SERVICE_ROOT_DIR}/${SERVICE_NAME}
+rm ${SERVICE_ROOT_DIR}/server_dashboard_logger.service
+rm ${SERVICE_ROOT_DIR}/server_dashboard_frontend.service
 
 echo "Disabling systemd services"
 systemctl daemon-reload
-systemctl stop ${SERVICE_NAME}
-systemctl disable ${SERVICE_NAME}
+systemctl stop server_dashboard_logger.service
+systemctl stop server_dashboard_frontend.service
 
-echo "server_dashboard_logger systemd service uninstallation complete"
+systemctl disable server_dashboard_logger.service
+systemctl disable server_dashboard_frontend.service
+
+echo "server_dashboard systemd services uninstallation complete"
