@@ -4,3 +4,4 @@ psutil
 apcaccess
 jsonlines
 netifaces
+dacite
