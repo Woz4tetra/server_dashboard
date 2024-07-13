@@ -6,4 +6,5 @@ BASE_DIR=$(realpath "$(dirname $0)")
 source ${BASE_DIR}/venv/bin/activate
 
 # Run the application
-python ${BASE_DIR}/run_logger_app.py
+cd ${BASE_DIR}
+python run_logger_app.py
