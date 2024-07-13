@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from dateutil.parser import parse as date_parse
 import datetime
 from dataclasses import asdict, dataclass
 from typing import Literal
 
 from apcaccess import status as apc
+from dateutil.parser import parse as date_parse
 
 from app.data_logger.tools.from_dict import from_dict
 

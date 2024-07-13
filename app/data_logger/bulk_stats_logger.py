@@ -1,5 +1,5 @@
 import shutil
-from typing import Iterable, Union, get_args
+from typing import Union, get_args
 
 import jsonlines
 
