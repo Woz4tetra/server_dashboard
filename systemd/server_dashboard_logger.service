@@ -6,7 +6,7 @@ Description=server_dashboard_logger
 Type=simple
 User=ben
 Group=ben
-ExecStart=/usr/bin/python /opt/megamind/server_dashboard/run_logger_app.py
+ExecStart=/opt/megamind/server_dashboard/run_logger_app.sh
 Restart=on-failure
 RestartSec=5s
 
