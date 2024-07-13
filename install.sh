@@ -4,7 +4,7 @@
 python3 -m venv venv
 
 # Activate virtual environment
-source venv/bin/activate
+source ${BASE_DIR}/venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
