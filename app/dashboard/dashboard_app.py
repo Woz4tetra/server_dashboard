@@ -90,7 +90,16 @@ class App:
             self.ups_data.setdefault(key, []).extend(value)  # type: ignore
 
 
+def format_df_time(df: pd.DataFrame, time_range: float) -> pd.DataFrame:
+    df = df[df["timestamp"] > time.time() - time_range]
+    df["time"] = pd.to_datetime(df["timestamp"], unit="s")
+    df.drop(columns=["timestamp"], inplace=True)
+    return df
+
+
 def draw_cpu_plot(cpu_data: list[CpuData], time_range: float) -> None:
+    if len(cpu_data) == 0:
+        return
     df = pd.DataFrame(
         [
             {
@@ -102,13 +111,9 @@ def draw_cpu_plot(cpu_data: list[CpuData], time_range: float) -> None:
             for data in cpu_data
         ]
     )
-    if df.empty:
-        return
 
-    df = df[df["timestamp"] > time.time() - time_range]
+    df = format_df_time(df, time_range)
 
-    df["time"] = pd.to_datetime(df["timestamp"], unit="s")
-    df.drop(columns=["timestamp"], inplace=True)
     cpu_df = df[["time", r"CPU%"]]
     memory_df = df[["time", "Memory used (MiB)"]]
     temp_df = df[["time", "Temperature (C)"]]
@@ -145,24 +150,168 @@ def draw_cpu_plot(cpu_data: list[CpuData], time_range: float) -> None:
         row=3,
         col=1,
     )
-    figure.update_layout(
-        height=800,
-        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="left", x=0.01),
-    )
+    figure.update_layout(height=700)
 
     st.plotly_chart(figure)
 
 
-def draw_gpu_plot(gpu_data: list[GpuData], time_range: float) -> None:
-    pass
+def draw_gpu_plot(all_gpu_data: dict[str, list[GpuData]], time_range: float) -> None:
+    if len(all_gpu_data) == 0:
+        return
+
+    figure = subplots.make_subplots(
+        rows=4,
+        cols=1,
+        subplot_titles=("GPU Utilization", "Memory Usage", "GPU Temperature", "Power"),
+    )
+
+    for gpu_data in all_gpu_data.values():
+        gpu_name = gpu_data[0].name
+        df = pd.DataFrame(
+            [
+                {
+                    "timestamp": data.timestamp,
+                    r"GPU%": data.utilization_gpu,
+                    "Memory used (MiB)": data.memory_used,
+                    "Temperature (C)": data.temperature_gpu,
+                    "Power (W)": data.power_draw,
+                }
+                for data in gpu_data
+            ]
+        )
+        df = format_df_time(df, time_range)
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df[r"GPU%"],
+                mode="lines",
+                name=f"{gpu_name} GPU %",
+            ),
+            row=1,
+            col=1,
+        )
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df["Memory used (MiB)"],
+                mode="lines",
+                name=f"{gpu_name} Memory used (MiB)",
+            ),
+            row=2,
+            col=1,
+        )
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df["Temperature (C)"],
+                mode="lines",
+                name=f"{gpu_name} Temperature (C)",
+            ),
+            row=3,
+            col=1,
+        )
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df["Power (W)"],
+                mode="lines",
+                name=f"{gpu_name} Power (W)",
+            ),
+            row=4,
+            col=1,
+        )
+    figure.update_layout(height=700)
+
+    st.plotly_chart(figure)
 
 
-def draw_network_plot(network_data: list[NetworkData], time_range: float) -> None:
-    pass
+def draw_network_plot(
+    network_data: dict[str, list[NetworkData]], time_range: float
+) -> None:
+    if len(network_data) == 0:
+        return
+
+    figure = subplots.make_subplots(
+        rows=2,
+        cols=1,
+        subplot_titles=("Ping",),
+    )
+
+    for dest, data in network_data.items():
+        df = pd.DataFrame(
+            [
+                {
+                    "timestamp": data.timestamp,
+                    "Ping (ms)": data.ping_ms,
+                }
+                for data in data
+            ]
+        )
+        df = format_df_time(df, time_range)
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df["Ping (ms)"],
+                mode="lines",
+                name=f"{dest} Ping (ms)",
+            ),
+            row=1,
+            col=1,
+        )
+    figure.update_layout(height=700)
+
+    st.plotly_chart(figure)
 
 
-def draw_ups_plot(ups_data: list[UpsData], time_range: float) -> None:
-    pass
+def draw_ups_plot(ups_data: dict[str, list[UpsData]], time_range: float) -> None:
+    if len(ups_data) == 0:
+        return
+
+    figure = subplots.make_subplots(
+        rows=2,
+        cols=1,
+        subplot_titles=("Status", "Power"),
+    )
+
+    dfs = {}
+    for serial, data in ups_data.items():
+        df = pd.DataFrame(
+            [
+                {
+                    "timestamp": data.timestamp,
+                    "Power (W)": data.output_current * data.output_voltage,
+                }
+                for data in data
+            ]
+        )
+        df = format_df_time(df, time_range)
+        dfs[serial] = df
+
+    unique_statuses = [
+        status for df in dfs.values() for status in df["Status"].unique()
+    ]
+
+    for serial, df in dfs.items():
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df["Status"],
+                mode="lines",
+                name=f"{serial} Status",
+            ),
+            row=1,
+            col=1,
+        )
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=df["time"],
+                y=df["Power (W)"],
+                mode="lines",
+                name=f"{serial} Power (W)",
+            ),
+            row=2,
+            col=1,
+        )
 
 
 APP = App()

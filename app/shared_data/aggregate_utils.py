@@ -1,6 +1,6 @@
 from typing import get_args
 
-from app.shared_data.types import AggregateImpl, DataImpl
+from app.shared_data.types import AggregateImpl, DataImpl, DataType
 
 AGGREGATE_MAPPING: dict[str, str] = {
     "CpuData": "CpuAggregatedData",
@@ -24,14 +24,14 @@ def get_aggregate_class(class_name: str) -> AggregateImpl:
     raise ValueError(f"Unknown aggregate class: {class_name}")
 
 
-def group_by_type(data: list[DataImpl]) -> dict[str, list[DataImpl]]:
+def group_by_type(data: list[DataType]) -> dict[str, list[DataType]]:
     groups = {}
     for row in data:
         groups.setdefault(row.__class__.__name__, []).append(row)
     return groups
 
 
-def group_by_key(data: list[DataImpl], key: str) -> dict[str, list[DataImpl]]:
+def group_by_key(data: list[DataType], key: str) -> dict[str, list[DataType]]:
     groups = {}
     for row in data:
         groups.setdefault(getattr(row, key), []).append(row)

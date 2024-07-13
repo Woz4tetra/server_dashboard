@@ -17,6 +17,7 @@ class UpsData:
     battery_voltage: float
     battery_percent: float
     output_current: float
+    output_voltage: float
     type: Literal["UpsData"] = "UpsData"
 
     def to_dict(self) -> dict:
@@ -37,6 +38,7 @@ class UpsAggregatedData:
     peak_battery_voltage: float
     peak_battery_percent: float
     peak_output_current: float
+    peak_output_voltage: float
     type: Literal["UpsAggregatedData"] = "UpsAggregatedData"
 
     @classmethod
@@ -52,6 +54,7 @@ class UpsAggregatedData:
             data, key=lambda x: x.battery_percent
         ).battery_percent
         peak_output_current = max(data, key=lambda x: x.output_current).output_current
+        peak_output_voltage = max(data, key=lambda x: x.output_voltage).output_voltage
         start_time = min(data, key=lambda x: x.timestamp).timestamp
         timestamp = datetime.datetime.now().timestamp()
         return UpsAggregatedData(
@@ -63,6 +66,7 @@ class UpsAggregatedData:
             peak_battery_voltage=peak_battery_voltage,
             peak_battery_percent=peak_battery_percent,
             peak_output_current=peak_output_current,
+            peak_output_voltage=peak_output_voltage,
         )
 
     def to_dict(self) -> dict:

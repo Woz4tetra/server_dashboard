@@ -1,4 +1,4 @@
-from typing import Union
+from typing import TypeVar, Union
 
 from app.shared_data.cpu_data import CpuAggregatedData, CpuData
 from app.shared_data.gpu_data import GpuAggregatedData, GpuData
@@ -18,3 +18,7 @@ AggregateImpl = Union[
     GpuAggregatedData,
     UpsAggregatedData,
 ]
+
+DataType = TypeVar("DataType", bound=DataImpl)
+
+AggregateType = TypeVar("AggregateType", bound=AggregateImpl)

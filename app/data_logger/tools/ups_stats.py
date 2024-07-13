@@ -21,4 +21,5 @@ def ups_stats() -> UpsData | None:
         battery_voltage=result["BATTV"],
         battery_percent=result["BCHARGE"],
         output_current=result["OUTCURNT"],
+        output_voltage=result["OUTPUTV"],
     )
