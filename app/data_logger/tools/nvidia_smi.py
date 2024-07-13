@@ -19,7 +19,6 @@ class GpuData:
     memory_free: int  # Free memory in MiB
     memory_used: int  # Used memory in MiB
     temperature_gpu: float  # GPU temperature in degrees Celsius
-    temperature_memory: float  # Memory temperature in degrees Celsius
     power_draw: float  # Power draw in watts
     type: Literal["GpuData"] = "GpuData"
 
@@ -43,7 +42,6 @@ class GpuAggregatedData:
     peak_memory_free: int  # in MiB
     peak_memory_used: int  # in MiB
     peak_temperature_gpu: float  # in degrees Celsius
-    peak_temperature_memory: float  # in degrees Celsius
     peak_power_draw: float  # in watts
     type: Literal["GpuAggregatedData"] = "GpuAggregatedData"
 
@@ -62,9 +60,6 @@ class GpuAggregatedData:
         peak_temperature_gpu = max(
             data, key=lambda x: x.temperature_gpu
         ).temperature_gpu
-        peak_temperature_memory = max(
-            data, key=lambda x: x.temperature_memory
-        ).temperature_memory
         peak_power_draw = max(data, key=lambda x: x.power_draw).power_draw
         start_time = min(data, key=lambda x: x.timestamp).timestamp
         timestamp = datetime.datetime.now().timestamp()
@@ -79,7 +74,6 @@ class GpuAggregatedData:
             peak_memory_free=peak_memory_free,
             peak_memory_used=peak_memory_used,
             peak_temperature_gpu=peak_temperature_gpu,
-            peak_temperature_memory=peak_temperature_memory,
             peak_power_draw=peak_power_draw,
         )
 
@@ -116,7 +110,6 @@ class NvidiaSmiManager:
             "memory.free,"
             "memory.used,"
             "temperature.gpu,"
-            "temperature.memory,"
             "power.draw",
             "--format=csv,noheader,nounits",
         ]
@@ -150,8 +143,7 @@ class NvidiaSmiManager:
                 memory_free=int(values[6]),
                 memory_used=int(values[7]),
                 temperature_gpu=parse_float(values[8]),
-                temperature_memory=parse_float(values[9]),
-                power_draw=parse_float(values[10]),
+                power_draw=parse_float(values[9]),
             )
             all_data.append(data)
         return all_data
