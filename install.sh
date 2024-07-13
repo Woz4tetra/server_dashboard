@@ -7,5 +7,5 @@ python3 -m venv venv
 source ${BASE_DIR}/venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r ${BASE_DIR}/requirements.txt
 
