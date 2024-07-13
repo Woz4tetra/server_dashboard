@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dateutil.parser import parse as date_parse
 import datetime
 from dataclasses import asdict, dataclass
 from typing import Literal
@@ -82,7 +83,7 @@ def ups_stats() -> UpsData | None:
         return None
 
     date_str = result["DATE"]
-    date = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %Z")
+    date = date_parse(date_str)
     return UpsData(
         timestamp=date.timestamp(),
         serial=result["APC"],
