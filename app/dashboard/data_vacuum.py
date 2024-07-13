@@ -47,25 +47,27 @@ def follow_task(fp: BufferedReader, queue: Queue, lock: Lock) -> None:
 @dataclass
 class AggregatedData:
     cpu: list[CpuAggregatedData] = field(default_factory=list)
-    gpu: list[GpuAggregatedData] = field(default_factory=list)
-    network: list[NetworkAggregatedData] = field(default_factory=list)
-    ups: list[UpsAggregatedData] = field(default_factory=list)
+    gpu: dict[str, list[GpuAggregatedData]] = field(default_factory=dict)
+    network: dict[str, list[NetworkAggregatedData]] = field(default_factory=dict)
+    ups: dict[str, list[UpsAggregatedData]] = field(default_factory=dict)
 
 
 def load_bulk() -> AggregatedData:
-    all_data = jsonlines.open(BULK_DATA)
+    all_lines = jsonlines.open(BULK_DATA)
     aggregate = AggregatedData()
-    for data_dict in all_data:
+    data = []
+    for data_dict in all_lines:
         row = get_aggregate_class(data_dict).from_dict(data_dict)
-        match row.type:
-            case "CpuAggregatedData":
-                aggregate.cpu.append(row)
-            case "GpuAggregatedData":
-                aggregate.gpu.append(row)
-            case "NetworkAggregatedData":
-                aggregate.network.append(row)
-            case "UpsAggregatedData":
-                aggregate.ups.append(row)
+        data.append(row)
+    grouped_by_type = group_by_type(data)
+
+    aggregate.cpu = grouped_by_type.get("CpuAggregatedData", [])
+    aggregate.gpu = group_by_key(grouped_by_type.get("GpuAggregatedData", []), "uuid")
+    aggregate.network = group_by_key(
+        grouped_by_type.get("NetworkAggregatedData", []), "destination"
+    )
+    aggregate.ups = group_by_key(grouped_by_type.get("UpsAggregatedData", []), "serial")
+
     return aggregate
 
 

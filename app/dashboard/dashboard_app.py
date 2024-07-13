@@ -5,8 +5,11 @@ import streamlit as st
 from app.dashboard.data_vacuum import DataVacuum, load_bulk
 from app.dashboard.draw_cpu_aggregate_plot import draw_cpu_aggregate_plot
 from app.dashboard.draw_cpu_plot import draw_cpu_plot
+from app.dashboard.draw_gpu_aggregate_plot import draw_gpu_aggregate_plot
 from app.dashboard.draw_gpu_plot import draw_gpu_plot
+from app.dashboard.draw_network_aggregate_plot import draw_network_aggregate_plot
 from app.dashboard.draw_network_plot import draw_network_plot
+from app.dashboard.draw_ups_aggregate_plot import draw_ups_aggregate_plot
 from app.dashboard.draw_ups_plot import draw_ups_plot
 
 APP = DataVacuum()
@@ -37,9 +40,9 @@ def main() -> None:
 
         plot_function, plot_data = {
             "CPU": (draw_cpu_aggregate_plot, aggregate_data.cpu),
-            "GPU": (draw_gpu_plot, aggregate_data.gpu),
-            "Network": (draw_network_plot, aggregate_data.network),
-            "UPS": (draw_ups_plot, aggregate_data.ups),
+            "GPU": (draw_gpu_aggregate_plot, aggregate_data.gpu),
+            "Network": (draw_network_aggregate_plot, aggregate_data.network),
+            "UPS": (draw_ups_aggregate_plot, aggregate_data.ups),
         }[plot_key]
 
         plot_function(plot_data, time_range)

@@ -33,6 +33,7 @@ class UpsAggregatedData:
     timestamp: float
     time_span: float
     serial: str
+    up_percentage: float
     peak_line_voltage: float
     peak_load_percent: float
     peak_battery_voltage: float
@@ -55,12 +56,15 @@ class UpsAggregatedData:
         ).battery_percent
         peak_output_current = max(data, key=lambda x: x.output_current).output_current
         peak_output_voltage = max(data, key=lambda x: x.output_voltage).output_voltage
-        start_time = min(data, key=lambda x: x.timestamp).timestamp
         timestamp = datetime.datetime.now().timestamp()
+        start_time = min(data, key=lambda x: x.timestamp).timestamp
+        time_span = timestamp - start_time
+        up_percentage = sum(x.status == "ONLINE" for x in data) / len(data) * 100
         return UpsAggregatedData(
             timestamp=timestamp,
-            time_span=timestamp - start_time,
+            time_span=time_span,
             serial=data[0].serial,
+            up_percentage=up_percentage,
             peak_line_voltage=peak_line_voltage,
             peak_load_percent=peak_load_percent,
             peak_battery_voltage=peak_battery_voltage,
