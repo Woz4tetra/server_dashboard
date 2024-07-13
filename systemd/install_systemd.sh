@@ -13,7 +13,8 @@ echo "Running server_dashboard systemd services install script"
 SERVICE_ROOT_DIR=/etc/systemd/system/
 
 mkdir -p ${SERVICE_ROOT_DIR}
-cp ${BASE_DIR}/${SERVICE_NAME} ${SERVICE_ROOT_DIR}
+cp ${BASE_DIR}/server_dashboard_logger.service ${SERVICE_ROOT_DIR}
+cp ${BASE_DIR}/server_dashboard_frontend.service ${SERVICE_ROOT_DIR}
 
 echo "Enabling systemd services"
 systemctl daemon-reload
