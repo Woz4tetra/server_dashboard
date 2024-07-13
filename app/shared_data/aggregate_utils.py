@@ -17,7 +17,11 @@ def get_data_class(data: dict) -> DataImpl:
     raise ValueError(f"Unknown data type: {data['type']}")
 
 
-def get_aggregate_class(class_name: str) -> AggregateImpl:
+def get_aggregate_class(data: dict) -> AggregateImpl:
+    return get_aggregate_class_from_name(data["type"])
+
+
+def get_aggregate_class_from_name(class_name: str) -> AggregateImpl:
     for cls in get_args(AggregateImpl):
         if cls.__name__ == class_name:
             return cls

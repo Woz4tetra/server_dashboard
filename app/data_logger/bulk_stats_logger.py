@@ -4,7 +4,7 @@ import jsonlines
 
 from app.shared_data.aggregate_utils import (
     AGGREGATE_MAPPING,
-    get_aggregate_class,
+    get_aggregate_class_from_name,
     get_data_class,
     group_by_key,
     group_by_type,
@@ -50,7 +50,7 @@ class BulkStatsLogger:
             return []
         aggregated_data = []
         for data in grouped_by_key.values():
-            aggregate_cls = get_aggregate_class(
+            aggregate_cls = get_aggregate_class_from_name(
                 AGGREGATE_MAPPING[data[0].__class__.__name__]
             )
             aggregated_data.append(aggregate_cls.from_collection(data))  # type: ignore
