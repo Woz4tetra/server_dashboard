@@ -16,7 +16,7 @@ APP = DataVacuum()
 
 
 def main() -> None:
-    st.set_page_config(layout="wide")
+    st.set_page_config(layout="wide", page_title="Server Dashboard")
 
     st.title("Server Dashboard")
 
