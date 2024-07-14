@@ -35,7 +35,7 @@ def main() -> None:
         if show_all:
             time_range = None
         else:
-            time_range = st.sidebar.slider("Plot time range (days)", 0.0, 60.0, 1.0)
+            time_range = st.sidebar.slider("Plot time range (days)", 0.0, 60.0, 30.0)
             time_range *= 3600 * 24
 
         plot_function, plot_data = {
