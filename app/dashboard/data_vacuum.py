@@ -96,9 +96,13 @@ class DataVacuum:
         with self.data_lock:
             while not self.line_queue.empty():
                 line = self.line_queue.get()
-                data_dict = json.loads(line)
+                try:
+                    data_dict = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
                 row = get_data_class(data_dict).from_dict(data_dict)
                 data.append(row)
+        print(f"Updating with {len(data)} records")
 
         grouped_by_type = group_by_type(data)
 
