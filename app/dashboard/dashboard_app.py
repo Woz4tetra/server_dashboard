@@ -57,7 +57,7 @@ def main() -> None:
             "UPS": (draw_ups_plot, APP.ups_data),
         }[plot_key]
 
-        if st.toggle("Live update"):
+        if st.sidebar.toggle("Live update"):
             with st.spinner("Updating..."):
                 placeholder = st.empty()
                 while True:
@@ -65,7 +65,7 @@ def main() -> None:
                     with placeholder.container():
                         plot_function(plot_data, time_range)
                     time.sleep(1.0)
-        elif st.button("Update"):
+        elif st.sidebar.button("Update"):
             APP.update()
             plot_function(plot_data, time_range)
         else:
