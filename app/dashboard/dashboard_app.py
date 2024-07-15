@@ -52,8 +52,8 @@ def main() -> None:
 
         plot_function(plot_data, time_range)
     else:
-        time_range = st.sidebar.slider("Plot time range (minutes)", 0.0, 60.0, 5.0)
-        time_range *= 60
+        time_range = st.sidebar.slider("Plot time range (hours)", 0.05, 24.0, 1.0)
+        time_range *= 3600
 
         plot_function, plot_data = {
             "CPU": (draw_cpu_plot, APP.cpu_data),
