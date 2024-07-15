@@ -19,3 +19,5 @@ def initialize_logs(name: str) -> None:
     file_handle.setFormatter(formatter)
     file_handle.setLevel(logging.DEBUG)
     logger.addHandler(file_handle)
+
+    logger.debug(f"Initialized logs for {name}")
