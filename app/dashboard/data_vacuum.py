@@ -91,6 +91,7 @@ class DataVacuum:
             target=follow_task, args=(fp, self.line_queue, self.data_lock), daemon=True
         )
         follow_thread.start()
+        self.logger.info("Started follow thread")
 
     def update(self) -> None:
         data = []

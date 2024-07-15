@@ -32,16 +32,20 @@ def main() -> None:
     )
 
     if plot_key is None:
+        logger.error("No plot key selected")
         return
 
     if show_aggregates:
+        logger.debug("Showing aggregates")
         aggregate_data = load_bulk()
         show_all = st.sidebar.checkbox("Show all", value=False)
         if show_all:
+            logger.debug("Showing all data")
             time_range = None
         else:
             time_range = st.sidebar.slider("Plot time range (days)", 0.0, 60.0, 30.0)
             time_range *= 3600 * 24
+            logger.debug(f"Aggregate time range: {time_range}")
 
         plot_function, plot_data = {
             "CPU": (draw_cpu_aggregate_plot, aggregate_data.cpu),
@@ -54,6 +58,7 @@ def main() -> None:
     else:
         time_range = st.sidebar.slider("Plot time range (hours)", 0.05, 24.0, 1.0)
         time_range *= 3600
+        logger.debug(f"Today time range: {time_range}")
 
         plot_function, plot_data = {
             "CPU": (draw_cpu_plot, APP.cpu_data),
@@ -63,16 +68,20 @@ def main() -> None:
         }[plot_key]
 
         if st.sidebar.toggle("Live update"):
+            logger.debug("Live updating")
             with st.spinner("Updating..."):
                 placeholder = st.empty()
                 while True:
+                    logger.debug("Updating plot")
                     APP.update()
                     with placeholder.container():
                         plot_function(plot_data, time_range)
                     time.sleep(1.0)
         elif st.sidebar.button("Update"):
+            logger.debug("Updating plot manually")
             APP.update()
             plot_function(plot_data, time_range)
         else:
+            logger.debug("Updating plot once")
             APP.update()
             plot_function(plot_data, time_range)
