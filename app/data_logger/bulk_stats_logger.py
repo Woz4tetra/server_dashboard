@@ -2,14 +2,14 @@ import shutil
 
 import jsonlines
 
-from app.shared_data.aggregate_utils import (
+from app.shared.aggregate_utils import (
     AGGREGATE_MAPPING,
     get_aggregate_class_from_name,
     get_data_class,
     group_by_key,
     group_by_type,
 )
-from app.shared_data.types import AggregateImpl, DataImpl
+from app.shared.types import AggregateImpl, DataImpl
 
 
 class BulkStatsLogger:

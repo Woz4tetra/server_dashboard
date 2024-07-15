@@ -1,30 +1,11 @@
 import asyncio
 import logging
 from datetime import datetime, timedelta
-from logging.handlers import TimedRotatingFileHandler
 
 from app.data_logger.bulk_stats_logger import BulkStatsLogger
 from app.data_logger.today_logger import TodayLogger
-from app.shared_data.constants import BULK_DATA, TODAYS_DATA
-
-
-def initialize_logs() -> None:
-    logger = logging.getLogger("data_logger")
-    logger.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter("[%(levelname)s] [%(name)s] %(asctime)s: %(message)s")
-
-    print_handle = logging.StreamHandler()
-    print_handle.setFormatter(formatter)
-    print_handle.setLevel(logging.DEBUG)
-    logger.addHandler(print_handle)
-
-    file_handle = TimedRotatingFileHandler(
-        "data/data_logger.log", when="midnight", interval=1, backupCount=7
-    )
-    file_handle.setFormatter(formatter)
-    file_handle.setLevel(logging.DEBUG)
-    logger.addHandler(file_handle)
+from app.shared.constants import BULK_DATA, TODAYS_DATA
+from app.shared.initialize_logs import initialize_logs
 
 
 async def bulk_task(data_path: str, bulk_path: str, roll_over_time: timedelta) -> None:
@@ -47,7 +28,7 @@ async def bulk_task(data_path: str, bulk_path: str, roll_over_time: timedelta) -
 
 
 async def async_main() -> None:
-    initialize_logs()
+    initialize_logs("data_logger")
     logger = logging.getLogger("data_logger")
     logger.info("Starting data logger")
 

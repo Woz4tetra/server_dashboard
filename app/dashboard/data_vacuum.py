@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from io import BufferedReader
@@ -8,7 +9,7 @@ from typing import Generator
 
 import jsonlines
 
-from app.shared_data import (
+from app.shared import (
     CpuAggregatedData,
     CpuData,
     GpuAggregatedData,
@@ -18,24 +19,28 @@ from app.shared_data import (
     UpsAggregatedData,
     UpsData,
 )
-from app.shared_data.aggregate_utils import (
+from app.shared.aggregate_utils import (
     get_aggregate_class,
     get_data_class,
     group_by_key,
     group_by_type,
 )
-from app.shared_data.constants import BULK_DATA, TODAYS_DATA
+from app.shared.constants import BULK_DATA, TODAYS_DATA
 
 
 def follow(fp: BufferedReader) -> Generator[bytes, None, None]:
     """generator function that yields new lines in a file"""
+    logger = logging.getLogger("frontend")
 
-    while True:
-        line = fp.readline()
-        if not line:
-            time.sleep(0.1)
-            continue
-        yield line
+    try:
+        while True:
+            line = fp.readline()
+            if not line:
+                time.sleep(0.1)
+                continue
+            yield line
+    except BaseException as e:
+        logger.error(f"Error in follow: {e}", exc_info=True)
 
 
 def follow_task(fp: BufferedReader, queue: Queue, lock: Lock) -> None:
@@ -73,6 +78,7 @@ def load_bulk() -> AggregatedData:
 
 class DataVacuum:
     def __init__(self) -> None:
+        self.logger = logging.getLogger("frontend")
         self.cpu_data: list[CpuData] = []
         self.gpu_data: dict[str, list[GpuData]] = {}
         self.network_data: dict[str, list[NetworkData]] = {}
@@ -86,12 +92,7 @@ class DataVacuum:
         )
         follow_thread.start()
 
-    def wait_for_data(self) -> None:
-        while self.line_queue.empty():
-            time.sleep(0.1)
-
     def update(self) -> None:
-        self.wait_for_data()
         data = []
         with self.data_lock:
             while not self.line_queue.empty():
@@ -102,7 +103,7 @@ class DataVacuum:
                     continue
                 row = get_data_class(data_dict).from_dict(data_dict)
                 data.append(row)
-        print(f"Updating with {len(data)} records")
+        self.logger.info(f"Updating with {len(data)} records")
 
         grouped_by_type = group_by_type(data)
 

@@ -1,6 +1,6 @@
 from typing import get_args
 
-from app.shared_data.types import AggregateImpl, DataImpl, DataType
+from app.shared.types import AggregateImpl, DataImpl, DataType
 
 AGGREGATE_MAPPING: dict[str, str] = {
     "CpuData": "CpuAggregatedData",

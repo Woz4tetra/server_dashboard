@@ -3,7 +3,7 @@ import streamlit as st
 from plotly import graph_objects, subplots
 
 from app.dashboard.draw_utils import format_df_time
-from app.shared_data.ups_data import UpsAggregatedData
+from app.shared.ups_data import UpsAggregatedData
 
 
 def draw_ups_aggregate_plot(

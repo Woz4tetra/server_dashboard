@@ -6,7 +6,7 @@ from queue import Queue
 import netifaces
 
 from app.data_logger.tools.ping import ping
-from app.shared_data.network_data import NetworkData
+from app.shared.network_data import NetworkData
 
 
 class NetworkHealthManager:

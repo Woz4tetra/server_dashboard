@@ -4,7 +4,7 @@ from plotly import graph_objects, subplots
 from plotly.colors import sequential
 
 from app.dashboard.draw_utils import format_df_time
-from app.shared_data import GpuAggregatedData
+from app.shared import GpuAggregatedData
 
 
 def draw_gpu_aggregate_plot(

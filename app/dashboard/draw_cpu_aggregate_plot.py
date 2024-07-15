@@ -3,7 +3,7 @@ import streamlit as st
 from plotly import graph_objects, subplots
 
 from app.dashboard.draw_utils import format_df_time
-from app.shared_data import CpuAggregatedData
+from app.shared import CpuAggregatedData
 
 
 def draw_cpu_aggregate_plot(

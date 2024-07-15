@@ -1,3 +1,4 @@
+import logging
 import time
 
 import streamlit as st
@@ -11,11 +12,15 @@ from app.dashboard.draw_network_aggregate_plot import draw_network_aggregate_plo
 from app.dashboard.draw_network_plot import draw_network_plot
 from app.dashboard.draw_ups_aggregate_plot import draw_ups_aggregate_plot
 from app.dashboard.draw_ups_plot import draw_ups_plot
+from app.shared.initialize_logs import initialize_logs
 
 APP = DataVacuum()
+initialize_logs("frontend")
 
 
 def main() -> None:
+    logger = logging.getLogger("frontend")
+    logger.info("Running frontend")
     st.set_page_config(layout="wide", page_title="Server Dashboard")
 
     st.title("Server Dashboard")
@@ -47,7 +52,7 @@ def main() -> None:
 
         plot_function(plot_data, time_range)
     else:
-        time_range = st.sidebar.slider("Plot time range (minutes)", 0.0, 60.0, 1.0)
+        time_range = st.sidebar.slider("Plot time range (minutes)", 0.0, 60.0, 5.0)
         time_range *= 60
 
         plot_function, plot_data = {

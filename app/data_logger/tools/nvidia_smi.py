@@ -1,7 +1,7 @@
 import datetime
 import subprocess
 
-from app.shared_data.gpu_data import GpuData
+from app.shared.gpu_data import GpuData
 
 
 def parse_float(value: str) -> float:

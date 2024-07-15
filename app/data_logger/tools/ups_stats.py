@@ -1,7 +1,7 @@
 from apcaccess import status as apc
 from dateutil.parser import parse as date_parse
 
-from app.shared_data.ups_data import UpsData
+from app.shared.ups_data import UpsData
 
 
 def ups_stats() -> UpsData | None:

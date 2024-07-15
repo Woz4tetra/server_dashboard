@@ -3,7 +3,7 @@ import datetime
 import numpy as np
 import psutil
 
-from app.shared_data.cpu_data import CpuData
+from app.shared.cpu_data import CpuData
 
 
 def get_cpu_temperatures() -> list[float]:

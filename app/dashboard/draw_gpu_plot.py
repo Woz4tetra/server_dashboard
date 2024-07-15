@@ -4,7 +4,7 @@ from plotly import graph_objects, subplots
 from plotly.colors import sequential
 
 from app.dashboard.draw_utils import format_df_time
-from app.shared_data import GpuData
+from app.shared import GpuData
 
 
 def draw_gpu_plot(all_gpu_data: dict[str, list[GpuData]], time_range: float) -> None:

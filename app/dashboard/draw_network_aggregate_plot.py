@@ -4,7 +4,7 @@ from plotly import graph_objects, subplots
 from plotly.colors import sequential
 
 from app.dashboard.draw_utils import format_df_time
-from app.shared_data.network_data import NetworkAggregatedData
+from app.shared.network_data import NetworkAggregatedData
 
 
 def draw_network_aggregate_plot(

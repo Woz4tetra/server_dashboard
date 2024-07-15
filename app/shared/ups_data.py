@@ -4,7 +4,7 @@ import datetime
 from dataclasses import asdict, dataclass
 from typing import Literal
 
-from app.shared_data.from_dict import from_dict
+from app.shared.from_dict import from_dict
 
 
 @dataclass

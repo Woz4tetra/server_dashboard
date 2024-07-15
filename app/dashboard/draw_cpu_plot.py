@@ -3,7 +3,7 @@ import streamlit as st
 from plotly import graph_objects, subplots
 
 from app.dashboard.draw_utils import format_df_time
-from app.shared_data import CpuData
+from app.shared import CpuData
 
 
 def draw_cpu_plot(cpu_data: list[CpuData], time_range: float) -> None:
