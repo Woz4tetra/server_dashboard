@@ -1,9 +1,8 @@
 import logging
-import time
 
 import streamlit as st
 
-from app.dashboard.data_vacuum import DataVacuum, load_bulk
+from app.dashboard.data_vacuum import load_bulk, load_today
 from app.dashboard.draw_cpu_aggregate_plot import draw_cpu_aggregate_plot
 from app.dashboard.draw_cpu_plot import draw_cpu_plot
 from app.dashboard.draw_gpu_aggregate_plot import draw_gpu_aggregate_plot
@@ -14,7 +13,6 @@ from app.dashboard.draw_ups_aggregate_plot import draw_ups_aggregate_plot
 from app.dashboard.draw_ups_plot import draw_ups_plot
 from app.shared.initialize_logs import initialize_logs
 
-APP = DataVacuum()
 initialize_logs("frontend")
 
 
@@ -56,32 +54,17 @@ def main() -> None:
 
         plot_function(plot_data, time_range)
     else:
+        logger.debug("Showing today's data")
+        todays_data = load_today()
         time_range = st.sidebar.slider("Plot time range (hours)", 0.05, 24.0, 1.0)
         time_range *= 3600
         logger.debug(f"Today time range: {time_range}")
 
         plot_function, plot_data = {
-            "CPU": (draw_cpu_plot, APP.cpu_data),
-            "GPU": (draw_gpu_plot, APP.gpu_data),
-            "Network": (draw_network_plot, APP.network_data),
-            "UPS": (draw_ups_plot, APP.ups_data),
+            "CPU": (draw_cpu_plot, todays_data.cpu),
+            "GPU": (draw_gpu_plot, todays_data.gpu),
+            "Network": (draw_network_plot, todays_data.network),
+            "UPS": (draw_ups_plot, todays_data.ups),
         }[plot_key]
 
-        if st.sidebar.toggle("Live update"):
-            logger.debug("Live updating")
-            with st.spinner("Updating..."):
-                placeholder = st.empty()
-                while True:
-                    logger.debug("Updating plot")
-                    APP.update()
-                    with placeholder.container():
-                        plot_function(plot_data, time_range)
-                    time.sleep(1.0)
-        elif st.sidebar.button("Update"):
-            logger.debug("Updating plot manually")
-            APP.update()
-            plot_function(plot_data, time_range)
-        else:
-            logger.debug("Updating plot once")
-            APP.update()
-            plot_function(plot_data, time_range)
+        plot_function(plot_data, time_range)

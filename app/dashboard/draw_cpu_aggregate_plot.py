@@ -33,6 +33,7 @@ def draw_cpu_aggregate_plot(
             "Peak Memory Usage",
             "Peak CPU Temperature",
         ),
+        shared_xaxes=True,
     )
 
     figure.add_trace(

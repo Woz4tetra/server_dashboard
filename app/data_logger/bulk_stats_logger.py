@@ -35,7 +35,7 @@ class BulkStatsLogger:
         network_data = group_by_key(
             grouped_by_type.get("NetworkData", []), "destination"
         )
-        ups_data = group_by_key(grouped_by_type.get("UpsData", []), "serial")
+        ups_data = {"ups": grouped_by_type.get("UpsData", [])}
         return (
             self.aggregate(cpu_data)
             + self.aggregate(gpu_data)

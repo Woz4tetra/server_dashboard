@@ -15,6 +15,7 @@ def draw_gpu_plot(all_gpu_data: dict[str, list[GpuData]], time_range: float) -> 
         rows=4,
         cols=1,
         subplot_titles=("GPU Utilization", "Memory Usage", "GPU Temperature", "Power"),
+        shared_xaxes=True,
     )
 
     keys = sorted(list(all_gpu_data.keys()))

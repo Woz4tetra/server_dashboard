@@ -22,6 +22,7 @@ def draw_gpu_aggregate_plot(
             "Peak GPU Temperature",
             "Peak Power Usage",
         ),
+        shared_xaxes=True,
     )
 
     keys = sorted(list(gpu_agg_data.keys()))

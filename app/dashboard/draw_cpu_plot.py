@@ -31,6 +31,7 @@ def draw_cpu_plot(cpu_data: list[CpuData], time_range: float) -> None:
         rows=3,
         cols=1,
         subplot_titles=("CPU Utilization", "Memory Usage", "CPU Temperature"),
+        shared_xaxes=True,
     )
     figure.add_trace(
         graph_objects.Scatter(

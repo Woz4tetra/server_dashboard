@@ -17,6 +17,7 @@ def draw_network_plot(
         rows=2,
         cols=1,
         subplot_titles=("Ping",),
+        shared_xaxes=True,
     )
     keys = sorted(list(network_data.keys()))
 
@@ -43,6 +44,19 @@ def draw_network_plot(
                 line=dict(color=line_color),
             ),
             row=1,
+            col=1,
+        )
+        nan_df = df[df["Ping (ms)"].isna()]
+        nan_df["Ping (ms)"] = key
+        figure.add_trace(
+            graph_objects.Scatter(
+                x=nan_df["time"],
+                y=nan_df["Ping (ms)"],
+                mode="markers",
+                name=f"{key} Misses",
+                line=dict(color=line_color),
+            ),
+            row=2,
             col=1,
         )
     figure.update_layout(height=700)

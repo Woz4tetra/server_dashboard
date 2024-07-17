@@ -17,9 +17,10 @@ def draw_network_aggregate_plot(
         rows=2,
         cols=1,
         subplot_titles=(
-            "Percent Packet Loss",
+            "Num misses",
             "Peak Ping",
         ),
+        shared_xaxes=True,
     )
 
     keys = sorted(list(net_agg_data.keys()))
@@ -32,7 +33,9 @@ def draw_network_aggregate_plot(
             [
                 {
                     "timestamp": data.timestamp,
-                    "Percent Packet Loss": data.percent_packet_loss,
+                    "Num misses": data.num_pings - data.num_hits,
+                    "Num pings": data.num_pings,
+                    "Percent packet loss": data.percent_packet_loss,
                     "Ping (ms)": data.peak_ping,
                 }
                 for data in net_data
@@ -40,12 +43,20 @@ def draw_network_aggregate_plot(
         )
         df = format_df_time(df, time_range)
 
+        text = df.apply(
+            lambda x: f"Num pings: {x['Num pings']}. "
+            f"Num misses: {x['Num misses']}. "
+            f"Percent packet loss: {x['Percent packet loss']:.6f}%",
+            axis=1,
+        )
+
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Percent Packet Loss"],
-                name=f"{key} Percent Packet Loss (%)",
+                y=df["Num misses"],
+                name=f"{key} Num misses",
                 mode="lines",
+                text=text,
                 line=dict(color=line_color),
             ),
             row=1,

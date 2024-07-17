@@ -31,6 +31,8 @@ class NetworkAggregatedData:
     destination: str
     peak_ping: float  # in milliseconds
     percent_packet_loss: float  # percent (0..100)
+    num_pings: int
+    num_hits: int
     type: Literal["NetworkAggregatedData"] = "NetworkAggregatedData"
 
     @classmethod
@@ -39,7 +41,8 @@ class NetworkAggregatedData:
         assert all(x.destination == data[0].destination for x in data)
         peak_ping = max(data, key=lambda x: x.ping_ms).ping_ms
         num_misses = np.isnan([x.ping_ms for x in data]).sum()
-        num_hits = len(data) - num_misses
+        num_pings = len(data)
+        num_hits = num_pings - num_misses
         percent_packet_loss = num_misses / num_hits * 100
         start_time = min(data, key=lambda x: x.timestamp).timestamp
         timestamp = datetime.datetime.now().timestamp()
@@ -49,6 +52,8 @@ class NetworkAggregatedData:
             destination=data[0].destination,
             peak_ping=peak_ping,
             percent_packet_loss=percent_packet_loss,
+            num_pings=num_pings,
+            num_hits=num_hits,
         )
 
     def to_dict(self) -> dict:
