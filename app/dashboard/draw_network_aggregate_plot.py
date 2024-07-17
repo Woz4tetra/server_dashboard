@@ -17,8 +17,8 @@ def draw_network_aggregate_plot(
         rows=2,
         cols=1,
         subplot_titles=(
-            "Num misses",
             "Peak Ping",
+            "Number of misses",
         ),
         shared_xaxes=True,
     )
@@ -53,10 +53,9 @@ def draw_network_aggregate_plot(
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Num misses"],
-                name=f"{key} Num misses",
+                y=df["Ping (ms)"],
+                name=f"{key} Peak Ping (ms)",
                 mode="lines",
-                text=text,
                 line=dict(color=line_color),
             ),
             row=1,
@@ -66,9 +65,10 @@ def draw_network_aggregate_plot(
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Ping (ms)"],
-                name=f"{key} Peak Ping (ms)",
+                y=df["Num misses"],
+                name=f"{key} Num misses",
                 mode="lines",
+                text=text,
                 line=dict(color=line_color),
             ),
             row=2,

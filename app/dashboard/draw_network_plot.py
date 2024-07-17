@@ -16,7 +16,7 @@ def draw_network_plot(
     figure = subplots.make_subplots(
         rows=2,
         cols=1,
-        subplot_titles=("Ping",),
+        subplot_titles=("Ping", "Misses"),
         shared_xaxes=True,
     )
     keys = sorted(list(network_data.keys()))
