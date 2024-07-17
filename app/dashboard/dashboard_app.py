@@ -33,6 +33,9 @@ def main() -> None:
         logger.error("No plot key selected")
         return
 
+    if st.sidebar.button("Update"):
+        pass
+
     if show_aggregates:
         logger.debug("Showing aggregates")
         aggregate_data = load_bulk()
