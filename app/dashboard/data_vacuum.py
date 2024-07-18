@@ -151,4 +151,4 @@ def load_today() -> TodaysData:
     yesterdays_data, file_hash = load_yesterday()
     todays_data = load_today_cache()
 
-    return parse_data_series(yesterdays_data + todays_data)
+    return parse_data_series(todays_data + yesterdays_data)
