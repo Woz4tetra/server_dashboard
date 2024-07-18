@@ -58,7 +58,8 @@ def main() -> None:
         plot_function(plot_data, time_range)
     else:
         logger.debug("Showing today's data")
-        todays_data = load_today()
+        with st.spinner("Loading data..."):
+            todays_data = load_today()
         time_range = st.sidebar.slider("Plot time range (hours)", 0.05, 24.0, 1.0)
         time_range *= 3600
         logger.debug(f"Today time range: {time_range}")
@@ -70,4 +71,5 @@ def main() -> None:
             "UPS": (draw_ups_plot, todays_data.ups),
         }[plot_key]
 
-        plot_function(plot_data, time_range)
+        with st.spinner("Rendering plots..."):
+            plot_function(plot_data, time_range)
