@@ -49,7 +49,7 @@ def compute_md5_hash(fname: str) -> str:
 
 
 def did_bulk_data_change() -> bool:
-    return compute_md5_hash(BULK_DATA) != load_bulk().data_hash
+    return compute_md5_hash(BULK_DATA) != load_bulk_cache().data_hash
 
 
 @st.cache_data
@@ -151,4 +151,4 @@ def load_today() -> TodaysData:
     yesterdays_data, file_hash = load_yesterday()
     todays_data = load_today_cache()
 
-    return parse_data_series(todays_data + yesterdays_data)
+    return parse_data_series(yesterdays_data + todays_data)
