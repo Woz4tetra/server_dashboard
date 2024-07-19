@@ -45,7 +45,6 @@ class UpsAggregatedData:
     @classmethod
     def from_collection(cls, data: list[UpsData]) -> UpsAggregatedData:
         # assumes all the same UPS
-        assert all(x.serial == data[0].serial for x in data)
         peak_line_voltage = max(data, key=lambda x: x.line_voltage).line_voltage
         peak_load_percent = max(data, key=lambda x: x.load_percent).load_percent
         peak_battery_voltage = max(

@@ -50,6 +50,8 @@ class BulkStatsLogger:
             return []
         aggregated_data = []
         for data in grouped_by_key.values():
+            if len(data) == 0:
+                continue
             aggregate_cls = get_aggregate_class_from_name(
                 AGGREGATE_MAPPING[data[0].__class__.__name__]
             )

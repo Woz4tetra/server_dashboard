@@ -49,4 +49,3 @@ class TodayLogger:
             with jsonlines.open(self.data_path, mode="a") as writer:
                 data = await self.data_queue.get()
                 writer.write(data.to_dict())
-                self.logger.debug(f"Wrote data: {type(data)}")

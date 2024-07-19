@@ -12,19 +12,25 @@ async def bulk_task(data_path: str, bulk_path: str, roll_over_time: timedelta) -
     logger = logging.getLogger("data_logger")
     logger.info("Starting bulk task")
     bulk_stats_logger = BulkStatsLogger(data_path, bulk_path)
-    start_date = datetime.now()
-    next_roll_over = start_date
     while True:
-        now = datetime.now()
-        next_roll_over += roll_over_time
-        logger.info(f"Next roll over: {next_roll_over}")
-        await asyncio.sleep((next_roll_over - now).total_seconds())
         bulk_stats_logger.make_backup()
+        logger.debug("Made backup of data.")
         data = bulk_stats_logger.read_data()
+        logger.debug(f"Read {len(data)} records from data.")
         bulk_data = bulk_stats_logger.bulk(data)
         bulk_stats_logger.write_data(bulk_data)
         bulk_stats_logger.clear_data()
         logger.info(f"Wrote {len(bulk_data)} records to bulk data.")
+
+        now = datetime.now()
+        next_roll_over = (
+            datetime(now.year, now.month, now.day) + timedelta(days=1) + roll_over_time
+        )
+        sleep_time = (next_roll_over - now).total_seconds()
+        logger.info(
+            f"Next roll over: {next_roll_over}. Sleeping for {sleep_time} seconds."
+        )
+        await asyncio.sleep(sleep_time)
 
 
 async def async_main() -> None:
@@ -41,7 +47,7 @@ async def async_main() -> None:
         today_logger.poll_network(),
         today_logger.poll_ups(),
         today_logger.write_data(),
-        bulk_task(data_path, BULK_DATA, timedelta(days=1)),
+        bulk_task(data_path, BULK_DATA, timedelta(hours=0, minutes=0)),
     )
 
 

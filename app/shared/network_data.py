@@ -40,7 +40,7 @@ class NetworkAggregatedData:
         # assumes all the same destination
         assert all(x.destination == data[0].destination for x in data)
         peak_ping = max(data, key=lambda x: x.ping_ms).ping_ms
-        num_misses = np.isnan([x.ping_ms for x in data]).sum()
+        num_misses = int(np.isnan([x.ping_ms for x in data]).sum())
         num_pings = len(data)
         num_hits = num_pings - num_misses
         percent_packet_loss = num_misses / num_hits * 100
