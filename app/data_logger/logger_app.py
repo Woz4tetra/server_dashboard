@@ -13,15 +13,6 @@ async def bulk_task(data_path: str, bulk_path: str, roll_over_time: timedelta) -
     logger.info("Starting bulk task")
     bulk_stats_logger = BulkStatsLogger(data_path, bulk_path)
     while True:
-        bulk_stats_logger.make_backup()
-        logger.debug("Made backup of data.")
-        data = bulk_stats_logger.read_data()
-        logger.debug(f"Read {len(data)} records from data.")
-        bulk_data = bulk_stats_logger.bulk(data)
-        bulk_stats_logger.write_data(bulk_data)
-        bulk_stats_logger.clear_data()
-        logger.info(f"Wrote {len(bulk_data)} records to bulk data.")
-
         now = datetime.now()
         next_roll_over = (
             datetime(now.year, now.month, now.day) + timedelta(days=1) + roll_over_time
@@ -31,6 +22,15 @@ async def bulk_task(data_path: str, bulk_path: str, roll_over_time: timedelta) -
             f"Next roll over: {next_roll_over}. Sleeping for {sleep_time} seconds."
         )
         await asyncio.sleep(sleep_time)
+
+        bulk_stats_logger.make_backup()
+        logger.debug("Made backup of data.")
+        data = bulk_stats_logger.read_data()
+        logger.debug(f"Read {len(data)} records from data.")
+        bulk_data = bulk_stats_logger.bulk(data)
+        bulk_stats_logger.write_data(bulk_data)
+        bulk_stats_logger.clear_data()
+        logger.info(f"Wrote {len(bulk_data)} records to bulk data.")
 
 
 async def async_main() -> None:

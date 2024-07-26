@@ -62,3 +62,4 @@ class BulkStatsLogger:
         with open(self.bulk_path, mode="a") as file:
             for row in data:
                 json.dump(row.to_dict(), file)
+                file.write("\n")

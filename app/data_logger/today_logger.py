@@ -48,3 +48,4 @@ class TodayLogger:
             with open(self.data_path, mode="a") as file:
                 data = await self.data_queue.get()
                 json.dump(data.to_dict(), file)
+                file.write("\n")

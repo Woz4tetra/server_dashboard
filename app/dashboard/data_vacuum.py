@@ -85,7 +85,7 @@ def did_yesterday_change() -> bool:
     new_hash = compute_md5_hash(YESTERDAYS_DATA)
     old_hash = load_yesterday()[1]
     logger = logging.getLogger("frontend")
-    logger.debug(f"Old hash: {old_hash}, New hash: {new_hash}")
+    logger.debug(f"{YESTERDAYS_DATA} Old hash: {old_hash}, New hash: {new_hash}")
     return new_hash != old_hash
 
 
