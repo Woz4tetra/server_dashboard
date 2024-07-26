@@ -42,6 +42,7 @@ def draw_network_aggregate_plot(
             ]
         )
         df = format_df_time(df, time_range)
+        df.sort_values(by="time", inplace=True)
 
         text = df.apply(
             lambda x: f"Num pings: {x['Num pings']}. "

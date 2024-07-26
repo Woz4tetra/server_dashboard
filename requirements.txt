@@ -2,7 +2,6 @@ streamlit
 pandas
 psutil
 apcaccess
-jsonlines
 netifaces
 dacite
 python-dateutil

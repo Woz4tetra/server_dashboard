@@ -38,6 +38,7 @@ def draw_ups_plot(all_ups_data: list[UpsData], time_range: float) -> None:
     df = format_df_time(df, time_range)
     if df.empty:
         return
+    df.sort_values(by="time", inplace=True)
 
     transitions = find_status_transitions(df)
     transitions.append((df["time"].max(), df["Status"].iloc[-1]))

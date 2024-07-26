@@ -37,6 +37,7 @@ def draw_gpu_plot(all_gpu_data: dict[str, list[GpuData]], time_range: float) -> 
             ]
         )
         df = format_df_time(df, time_range)
+        df.sort_values(by="time", inplace=True)
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],

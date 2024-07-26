@@ -2,7 +2,6 @@ import hashlib
 import logging
 from dataclasses import dataclass, field
 
-import jsonlines
 import streamlit as st
 
 from app.shared import (
@@ -22,6 +21,7 @@ from app.shared.aggregate_utils import (
     group_by_type,
 )
 from app.shared.constants import BULK_DATA, TODAYS_DATA, YESTERDAYS_DATA
+from app.shared.read_json_lines import read_json_lines
 from app.shared.types import DataImpl
 
 
@@ -55,12 +55,12 @@ def did_bulk_data_change() -> bool:
 @st.cache_data
 def load_bulk_cache() -> AggregatedData:
     logger = logging.getLogger("frontend")
-    all_lines = jsonlines.open(BULK_DATA)
     aggregate = AggregatedData()
     data = []
-    for data_dict in all_lines:
-        row = get_aggregate_class(data_dict).from_dict(data_dict)
-        data.append(row)
+    with open(BULK_DATA, "rb") as file:
+        for data_dict in read_json_lines(file):
+            row = get_aggregate_class(data_dict).from_dict(data_dict)
+            data.append(row)
     logger.debug(f"Loaded {len(data)} rows")
     grouped_by_type = group_by_type(data)
 
@@ -82,15 +82,20 @@ def load_bulk() -> AggregatedData:
 
 
 def did_yesterday_change() -> bool:
-    return compute_md5_hash(YESTERDAYS_DATA) != load_yesterday()[1]
+    new_hash = compute_md5_hash(YESTERDAYS_DATA)
+    old_hash = load_yesterday()[1]
+    logger = logging.getLogger("frontend")
+    logger.debug(f"Old hash: {old_hash}, New hash: {new_hash}")
+    return new_hash != old_hash
 
 
 @st.cache_data
 def load_yesterday() -> tuple[list[DataImpl], str]:
     logger = logging.getLogger("frontend")
     data = []
-    for data_dict in jsonlines.open(YESTERDAYS_DATA):
-        data.append(get_data_class(data_dict).from_dict(data_dict))
+    with open(YESTERDAYS_DATA, "rb") as file:
+        for data_dict in read_json_lines(file):
+            data.append(get_data_class(data_dict).from_dict(data_dict))
     logger.debug(f"Loaded {len(data)} rows from {YESTERDAYS_DATA}")
     return data, compute_md5_hash(YESTERDAYS_DATA)
 
@@ -109,7 +114,7 @@ def load_today_cache() -> list[DataImpl]:
     with open(TODAYS_DATA, "rb") as file:
         file.seek(TODAY_DATA_CACHE.seek)
         data = []
-        for data_dict in jsonlines.Reader(file):
+        for data_dict in read_json_lines(file):
             data.append(get_data_class(data_dict).from_dict(data_dict))
         TODAY_DATA_CACHE.seek = file.tell()
         TODAY_DATA_CACHE.parsed_data.extend(data)

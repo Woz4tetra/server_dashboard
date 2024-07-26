@@ -22,6 +22,7 @@ def draw_cpu_plot(cpu_data: list[CpuData], time_range: float) -> None:
     )
 
     df = format_df_time(df, time_range)
+    df.sort_values(by="time", inplace=True)
 
     cpu_df = df[["time", r"CPU%"]]
     memory_df = df[["time", "Memory used (MiB)"]]

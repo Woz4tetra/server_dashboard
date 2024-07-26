@@ -24,6 +24,7 @@ def draw_cpu_aggregate_plot(
         ]
     )
     df = format_df_time(df, time_range)
+    df.sort_values(by="time", inplace=True)
 
     figure = subplots.make_subplots(
         rows=3,

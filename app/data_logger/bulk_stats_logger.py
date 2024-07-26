@@ -1,6 +1,5 @@
+import json
 import shutil
-
-import jsonlines
 
 from app.shared.aggregate_utils import (
     AGGREGATE_MAPPING,
@@ -9,6 +8,7 @@ from app.shared.aggregate_utils import (
     group_by_key,
     group_by_type,
 )
+from app.shared.read_json_lines import read_json_lines
 from app.shared.types import AggregateImpl, DataImpl
 
 
@@ -25,8 +25,8 @@ class BulkStatsLogger:
             f.write("")
 
     def read_data(self) -> list[DataImpl]:
-        with jsonlines.open(self.data_path) as reader:
-            return [get_data_class(row).from_dict(row) for row in reader]
+        with open(self.data_path, "rb") as file:
+            return [get_data_class(row).from_dict(row) for row in read_json_lines(file)]
 
     def bulk(self, data: list[DataImpl]) -> list[AggregateImpl]:
         grouped_by_type = group_by_type(data)
@@ -59,6 +59,6 @@ class BulkStatsLogger:
         return aggregated_data
 
     def write_data(self, data: list[AggregateImpl]) -> None:
-        with jsonlines.open(self.bulk_path, mode="a") as writer:
+        with open(self.bulk_path, mode="a") as file:
             for row in data:
-                writer.write(row.to_dict())
+                json.dump(row.to_dict(), file)

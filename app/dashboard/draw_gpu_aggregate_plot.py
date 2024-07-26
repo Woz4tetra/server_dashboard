@@ -45,6 +45,7 @@ def draw_gpu_aggregate_plot(
             ]
         )
         df = format_df_time(df, time_range)
+        df.sort_values(by="time", inplace=True)
 
         figure.add_trace(
             graph_objects.Scatter(

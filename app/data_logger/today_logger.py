@@ -1,7 +1,6 @@
 import asyncio
+import json
 import logging
-
-import jsonlines
 
 from app.data_logger.tools.cpu_usage import cpu_usage
 from app.data_logger.tools.network_health import MultiDestinationHealth
@@ -46,6 +45,6 @@ class TodayLogger:
 
     async def write_data(self) -> None:
         while True:
-            with jsonlines.open(self.data_path, mode="a") as writer:
+            with open(self.data_path, mode="a") as file:
                 data = await self.data_queue.get()
-                writer.write(data.to_dict())
+                json.dump(data.to_dict(), file)
