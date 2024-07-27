@@ -10,10 +10,8 @@ from app.shared.ups_data import UpsData
 
 def ups_stats() -> UpsData | None:
     logger = logging.getLogger("data_logger")
-    logger.info("Polling UPS stats")
     try:
         result = apc.parse(apc.get(), strip_units=True)
-        logger.info("Got UPS stats: %s", result)
     except ConnectionRefusedError as e:
         logger.error(f"Failed to connect to UPS: {e}")
         return None
