@@ -1,3 +1,7 @@
+import logging
+import os
+import time
+
 from apcaccess import status as apc
 from dateutil.parser import parse as date_parse
 
@@ -5,13 +9,24 @@ from app.shared.ups_data import UpsData
 
 
 def ups_stats() -> UpsData | None:
+    logger = logging.getLogger("data_logger")
+    logger.info("Polling UPS stats")
     try:
         result = apc.parse(apc.get(), strip_units=True)
-    except ConnectionRefusedError:
+        logger.info("Got UPS stats: %s", result)
+    except ConnectionRefusedError as e:
+        logger.error(f"Failed to connect to UPS: {e}")
         return None
 
     date_str = result["DATE"]
     date = date_parse(date_str)
+
+    now = time.time()
+    data_timestamp = date.timestamp()
+    if now - data_timestamp > 240:
+        logger.error("Data is too old. Restarting APC service.")
+        os.system("sudo systemctl restart apcupsd.service")
+        return None
     return UpsData(
         timestamp=date.timestamp(),
         serial=result["APC"],
