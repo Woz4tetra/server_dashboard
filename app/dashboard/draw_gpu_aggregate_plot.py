@@ -17,10 +17,10 @@ def draw_gpu_aggregate_plot(
         rows=4,
         cols=1,
         subplot_titles=(
-            "Peak GPU Utilization",
-            "Peak Memory Usage",
-            "Peak GPU Temperature",
-            "Peak Power Usage",
+            "Average GPU Utilization",
+            "Average Memory Usage",
+            "Average GPU Temperature",
+            "Average Power Usage",
         ),
         shared_xaxes=True,
     )
@@ -36,10 +36,10 @@ def draw_gpu_aggregate_plot(
             [
                 {
                     "timestamp": data.timestamp,
-                    "Peak GPU Utilization": data.peak_utilization_gpu,
-                    "Peak Memory Usage": data.peak_memory_used,
-                    "Peak GPU Temperature": data.peak_temperature_gpu,
-                    "Peak Power Usage": data.peak_power_draw,
+                    "Average GPU Utilization": data.average_utilization_gpu,
+                    "Average Memory Usage": data.average_memory_used,
+                    "Average GPU Temperature": data.average_temperature_gpu,
+                    "Average Power Usage": data.average_power_draw,
                 }
                 for data in gpu_data
             ]
@@ -50,8 +50,8 @@ def draw_gpu_aggregate_plot(
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Peak GPU Utilization"],
-                name=f"{gpu_name} Peak GPU Utilization (%)",
+                y=df["Average GPU Utilization"],
+                name=f"{gpu_name} Average GPU Utilization (%)",
                 mode="lines",
                 line=dict(color=line_color),
             ),
@@ -62,8 +62,8 @@ def draw_gpu_aggregate_plot(
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Peak Memory Usage"],
-                name=f"{gpu_name} Peak Memory Usage (MiB)",
+                y=df["Average Memory Usage"],
+                name=f"{gpu_name} Average Memory Usage (MiB)",
                 mode="lines",
                 line=dict(color=line_color),
             ),
@@ -74,8 +74,8 @@ def draw_gpu_aggregate_plot(
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Peak GPU Temperature"],
-                name=f"{gpu_name} Peak GPU Temperature (C)",
+                y=df["Average GPU Temperature"],
+                name=f"{gpu_name} Average GPU Temperature (C)",
                 mode="lines",
                 line=dict(color=line_color),
             ),
@@ -86,8 +86,8 @@ def draw_gpu_aggregate_plot(
         figure.add_trace(
             graph_objects.Scatter(
                 x=df["time"],
-                y=df["Peak Power Usage"],
-                name=f"{gpu_name} Peak Power Usage (W)",
+                y=df["Average Power Usage"],
+                name=f"{gpu_name} Average Power Usage (W)",
                 mode="lines",
                 line=dict(color=line_color),
             ),

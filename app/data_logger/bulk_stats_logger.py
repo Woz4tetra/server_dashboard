@@ -5,6 +5,7 @@ from app.shared.aggregate_utils import (
     AGGREGATE_MAPPING,
     get_aggregate_class_from_name,
     get_data_class,
+    group_by_day,
     group_by_key,
     group_by_type,
 )
@@ -29,19 +30,22 @@ class BulkStatsLogger:
             return [get_data_class(row).from_dict(row) for row in read_json_lines(file)]
 
     def bulk(self, data: list[DataImpl]) -> list[AggregateImpl]:
-        grouped_by_type = group_by_type(data)
-        cpu_data = {"cpu": grouped_by_type.get("CpuData", [])}
-        gpu_data = group_by_key(grouped_by_type.get("GpuData", []), "uuid")
-        network_data = group_by_key(
-            grouped_by_type.get("NetworkData", []), "destination"
-        )
-        ups_data = {"ups": grouped_by_type.get("UpsData", [])}
-        return (
-            self.aggregate(cpu_data)
-            + self.aggregate(gpu_data)
-            + self.aggregate(network_data)
-            + self.aggregate(ups_data)
-        )
+        aggregates = []
+        for day_data in group_by_day(data):
+            grouped_by_type = group_by_type(day_data)
+            cpu_data = {"cpu": grouped_by_type.get("CpuData", [])}
+            gpu_data = group_by_key(grouped_by_type.get("GpuData", []), "uuid")
+            network_data = group_by_key(
+                grouped_by_type.get("NetworkData", []), "destination"
+            )
+            ups_data = {"ups": grouped_by_type.get("UpsData", [])}
+            aggregates += (
+                self.aggregate(cpu_data)
+                + self.aggregate(gpu_data)
+                + self.aggregate(network_data)
+                + self.aggregate(ups_data)
+            )
+        return aggregates
 
     def aggregate(
         self, grouped_by_key: dict[str, list[DataImpl]]

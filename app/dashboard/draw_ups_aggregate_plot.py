@@ -27,7 +27,8 @@ def draw_ups_aggregate_plot(
             {
                 "timestamp": data.timestamp,
                 "Up percentage": data.up_percentage,
-                "Peak Power": data.peak_output_current * data.peak_output_voltage,
+                "Average Power": data.average_output_current
+                * data.average_output_voltage,
             }
             for data in ups_agg_data
         ]
@@ -49,9 +50,9 @@ def draw_ups_aggregate_plot(
     figure.add_trace(
         graph_objects.Scatter(
             x=df["time"],
-            y=df["Peak Power"],
+            y=df["Average Power"],
             mode="lines",
-            name="Peak Power (W)",
+            name="Average Power (W)",
         ),
         row=2,
         col=1,

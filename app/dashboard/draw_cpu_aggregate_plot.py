@@ -16,9 +16,9 @@ def draw_cpu_aggregate_plot(
         [
             {
                 "timestamp": data.timestamp,
-                "Peak CPU Utilization": data.peak_utilization,
-                "Peak Memory Usage": data.peak_memory_used,
-                "Peak CPU Temperature": data.peak_temperature,
+                "Average CPU Utilization": data.average_utilization,
+                "Average Memory Usage": data.average_memory_used,
+                "Average CPU Temperature": data.average_temperature,
             }
             for data in cpu_agg_data
         ]
@@ -30,9 +30,9 @@ def draw_cpu_aggregate_plot(
         rows=3,
         cols=1,
         subplot_titles=(
-            "Peak CPU Utilization",
-            "Peak Memory Usage",
-            "Peak CPU Temperature",
+            "Average CPU Utilization",
+            "Average Memory Usage",
+            "Average CPU Temperature",
         ),
         shared_xaxes=True,
     )
@@ -40,8 +40,8 @@ def draw_cpu_aggregate_plot(
     figure.add_trace(
         graph_objects.Scatter(
             x=df["time"],
-            y=df["Peak CPU Utilization"],
-            name="Peak CPU Utilization",
+            y=df["Average CPU Utilization"],
+            name="Average CPU Utilization",
             mode="lines",
         ),
         row=1,
@@ -51,8 +51,8 @@ def draw_cpu_aggregate_plot(
     figure.add_trace(
         graph_objects.Scatter(
             x=df["time"],
-            y=df["Peak Memory Usage"],
-            name="Peak Memory Usage",
+            y=df["Average Memory Usage"],
+            name="Average Memory Usage",
             mode="lines",
         ),
         row=2,
@@ -62,8 +62,8 @@ def draw_cpu_aggregate_plot(
     figure.add_trace(
         graph_objects.Scatter(
             x=df["time"],
-            y=df["Peak CPU Temperature"],
-            name="Peak CPU Temperature",
+            y=df["Average CPU Temperature"],
+            name="Average CPU Temperature",
             mode="lines",
         ),
         row=3,

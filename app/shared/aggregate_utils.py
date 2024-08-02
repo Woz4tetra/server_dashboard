@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from typing import get_args
 
 from app.shared.types import AggregateImpl, DataImpl, DataType
@@ -26,6 +27,17 @@ def get_aggregate_class_from_name(class_name: str) -> AggregateImpl:
         if cls.__name__ == class_name:
             return cls
     raise ValueError(f"Unknown aggregate class: {class_name}")
+
+
+def group_by_day(data: list[DataType]) -> list[list[DataType]]:
+    data_map: dict[date, list[DataType]] = {}
+    for row in data:
+        row_date = datetime.fromtimestamp(row.timestamp)
+        data_map.setdefault(row_date.date(), []).append(row)
+    grouped_data = list(data_map.values())
+    grouped_dates = list(data_map.keys())
+    grouped_dates = [row for timestamp, row in sorted(zip(grouped_dates, grouped_data))]
+    return grouped_data
 
 
 def group_by_type(data: list[DataType]) -> dict[str, list[DataType]]:
