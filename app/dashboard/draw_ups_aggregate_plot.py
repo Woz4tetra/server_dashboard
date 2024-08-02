@@ -17,7 +17,7 @@ def draw_ups_aggregate_plot(
         cols=1,
         subplot_titles=(
             "Up percentage",
-            "Peak Power",
+            "Average Power",
         ),
         shared_xaxes=True,
     )
