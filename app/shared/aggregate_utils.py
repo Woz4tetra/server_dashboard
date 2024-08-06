@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import get_args
 
 from app.shared.types import AggregateImpl, DataImpl, DataType
@@ -30,10 +30,13 @@ def get_aggregate_class_from_name(class_name: str) -> AggregateImpl:
 
 
 def group_by_day(data: list[DataType]) -> list[list[DataType]]:
-    data_map: dict[date, list[DataType]] = {}
+    data_map: dict[int, list[DataType]] = {}
+    now = datetime.now()
     for row in data:
         row_date = datetime.fromtimestamp(row.timestamp)
-        data_map.setdefault(row_date.date(), []).append(row)
+        row_delta = now - row_date
+        key = int(row_delta.days)
+        data_map.setdefault(key, []).append(row)
     grouped_data = list(data_map.values())
     grouped_dates = list(data_map.keys())
     grouped_dates = [row for timestamp, row in sorted(zip(grouped_dates, grouped_data))]
