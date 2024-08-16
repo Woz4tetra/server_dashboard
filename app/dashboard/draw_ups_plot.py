@@ -42,11 +42,12 @@ def draw_ups_plot(all_ups_data: list[UpsData], time_range: float) -> None:
 
     transitions = find_status_transitions(df)
     transitions.append((df["time"].max(), df["Status"].iloc[-1]))
+    unique_statuses = [status for status in df["Status"].unique()]
 
     figure.add_trace(
         graph_objects.Scatter(
             x=[time for time, _ in transitions],
-            y=[0 for _ in transitions],
+            y=[unique_statuses.index(status) for _, status in transitions],
             mode="lines+markers",
             name="Status",
             text=transitions,
