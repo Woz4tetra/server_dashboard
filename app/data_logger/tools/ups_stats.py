@@ -27,12 +27,12 @@ def ups_stats() -> UpsData | None:
         return None
     return UpsData(
         timestamp=date.timestamp(),
-        serial=result["APC"],
-        line_voltage=float(result["LINEV"]),
-        status=result["STATUS"],
-        load_percent=float(result["LOADPCT"]),
-        battery_voltage=float(result["BATTV"]),
-        battery_percent=float(result["BCHARGE"]),
-        output_current=float(result["OUTCURNT"]),
-        output_voltage=float(result["OUTPUTV"]),
+        serial=result.get("APC", ""),
+        line_voltage=float(result.get("LINEV", 0.0)),
+        status=result.get("STATUS", ""),
+        load_percent=float(result.get("LOADPCT", 0.0)),
+        battery_voltage=float(result.get("BATTV", 0.0)),
+        battery_percent=float(result.get("BCHARGE", 0.0)),
+        output_current=float(result.get("OUTCURNT", 0.0)),
+        output_voltage=float(result.get("OUTPUTV", 0.0)),
     )
