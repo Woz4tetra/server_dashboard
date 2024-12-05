@@ -115,6 +115,8 @@ def load_today_cache() -> list[DataImpl]:
         file.seek(TODAY_DATA_CACHE.seek)
         data = []
         for data_dict in read_json_lines(file):
+            if len(data) % 1000 == 0 and len(data) > 0:
+                logger.debug(f"So far loaded {len(data)} rows from {TODAYS_DATA}")
             data.append(get_data_class(data_dict).from_dict(data_dict))
         TODAY_DATA_CACHE.seek = file.tell()
         TODAY_DATA_CACHE.parsed_data.extend(data)

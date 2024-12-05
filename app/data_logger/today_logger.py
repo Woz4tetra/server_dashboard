@@ -5,7 +5,7 @@ import logging
 from app.data_logger.tools.cpu_usage import cpu_usage
 from app.data_logger.tools.network_health import MultiDestinationHealth
 from app.data_logger.tools.nvidia_smi import nvidia_smi
-from app.data_logger.tools.ups_stats import ups_stats
+from app.data_logger.tools.ups_stats import UpsPollThread, ups_stats
 from app.shared.data_interface import DataInterface
 
 
@@ -13,6 +13,8 @@ class TodayLogger:
     def __init__(self, data_path: str) -> None:
         self.data_queue: asyncio.Queue[DataInterface] = asyncio.Queue()
         self.data_path = data_path
+        self.ups_poll_thread = UpsPollThread(poll_delay=30.0, stale_threshold=300.0)
+        self.ups_poll_thread.start()
         self.logger = logging.getLogger("data_logger")
 
     async def poll_cpu(self) -> None:
@@ -38,7 +40,7 @@ class TodayLogger:
 
     async def poll_ups(self) -> None:
         while True:
-            data = ups_stats()
+            data = ups_stats(self.ups_poll_thread)
             if data is not None:
                 await self.data_queue.put(data)
             await asyncio.sleep(60)

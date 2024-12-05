@@ -2,6 +2,8 @@ import logging
 import os
 import time
 from datetime import datetime
+from queue import Queue
+from threading import Thread
 
 from apcaccess import status as apc
 from dateutil.parser import parse as date_parse
@@ -27,12 +29,56 @@ def bad_data(date: datetime, result: dict[str, str]) -> UpsData:
     )
 
 
-def ups_stats() -> UpsData | None:
+class UpsPollThread:
+    def __init__(self, poll_delay: float, stale_threshold: float) -> None:
+        self.task = Thread(target=self.poll, daemon=True)
+        self.queue = Queue()
+        self.poll_delay = poll_delay
+        self.stale_threshold = stale_threshold
+        self.last_receive_time = time.time()
+        self.logger = logging.getLogger("data_logger")
+
+    def start(self) -> None:
+        self.logger.info("Starting UPS poll thread")
+        self.task.start()
+
+    def poll(self) -> None:
+        while True:
+            try:
+                self.logger.debug("Polling UPS")
+                result = apc.parse(apc.get(), strip_units=True)
+                self.logger.debug("Received data from UPS")
+            except ConnectionRefusedError as e:
+                self.logger.error(f"Failed to connect to UPS: {e}")
+            self.queue.put(result)
+            time.sleep(self.poll_delay)
+
+    def restart(self) -> None:
+        del self.task
+        self.task = Thread(target=self.poll, daemon=True)
+        self.start()
+
+    def get(self) -> dict[str, str] | None:
+        result = None
+        while not self.queue.empty():
+            result = self.queue.get()
+            self.last_receive_time = time.time()
+        return result
+
+    def is_stale(self) -> bool:
+        return time.time() - self.last_receive_time > self.stale_threshold
+
+
+def ups_stats(poll_thread: UpsPollThread) -> UpsData | None:
     logger = logging.getLogger("data_logger")
-    try:
-        result = apc.parse(apc.get(), strip_units=True)
-    except ConnectionRefusedError as e:
-        logger.error(f"Failed to connect to UPS: {e}")
+    result = poll_thread.get()
+    if poll_thread.is_stale():
+        logger.error("Data is stale. Restarting APC service.")
+        poll_thread.restart()
+        restart_ups_service()
+        return None
+
+    if not result:
         return None
 
     date_str = result["DATE"]
